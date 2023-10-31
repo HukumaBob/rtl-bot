@@ -9,6 +9,7 @@ import asyncio
 from aiogram.filters import Command
 from motor.motor_asyncio import AsyncIOMotorClient
 from aiogram import Bot, Dispatcher, types
+
 load_dotenv()
 TOKEN = str(os.environ.get("TOKEN", default=0))
 
@@ -89,20 +90,21 @@ dp = Dispatcher()
 
 @dp.message(Command("start"))
 async def cmd_start(message: types.Message):
-    await message.reply(f"Привет {message.from_user.username}! Отправьте мне данные для агрегации в формате JSON.")
+    await message.reply(
+        f'Привет {message.from_user.username}! \n'
+        'Отправьте мне данные для агрегации в формате JSON.')
 
 
 @dp.message()
 async def handle_message(message: types.Message):
     data = json.loads(message.text)
     result = await aggregate_salaries(data['dt_from'], data['dt_upto'], data['group_type'])
-    # await message.reply(message.text)
     await message.answer(json.dumps(result))
 
+
 async def main():
-        await dp.start_polling(bot)
+    await dp.start_polling(bot)
 
 
 if __name__ == '__main__':
     asyncio.run(main())
-
